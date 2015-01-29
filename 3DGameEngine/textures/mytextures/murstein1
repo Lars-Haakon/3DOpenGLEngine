@@ -1,0 +1,4 @@
+colorMap textures/mytextures/murstein1.bmp
+normalMap textures/mytextures/murstein1_n.bmp
+specularIntensity 1.0
+specularPower 4.0

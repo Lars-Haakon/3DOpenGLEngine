@@ -1,0 +1,4 @@
+colorMap textures/mytextures/test.bmp
+normalMap textures/mytextures/test_n.bmp
+specularIntensity 0.5
+specularPower 2.0

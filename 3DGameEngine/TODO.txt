@@ -1,0 +1,11 @@
+-- Proper resolvment of contacts
+
+-- Proper collisiondetection
+
+-- FRICTION
+
+-- Add restitution for material and objects
+
+-- Add support for animated objects
+
+-- Network support

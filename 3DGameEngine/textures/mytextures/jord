@@ -1,0 +1,4 @@
+colorMap textures/mytextures/jord.bmp
+normalMap textures/mytextures/identitynormal.bmp
+specularIntensity 0.5
+specularPower 2.0

@@ -1,0 +1,4 @@
+colorMap textures/mytextures/mustein2.bmp
+normalMap textures/mytextures/identitynormal.bmp
+specularIntensity 0.5
+specularPower 2.0
