@@ -132,9 +132,9 @@ Matrix4f Matrix4f::operator*(float f)
 
 Vector3f Matrix4f::operator*(Vector3f &v)
 {
-	float x = m[0][0] * v.getX() + m[0][1] * v.getY() + m[0][2] * v.getZ();
-	float y = m[1][0] * v.getX() + m[1][1] * v.getY() + m[1][2] * v.getZ();
-	float z = m[2][0] * v.getX() + m[2][1] * v.getY() + m[2][2] * v.getZ();
+	float x = m[0][0] * v.getX() + m[0][1] * v.getY() + m[0][2] * v.getZ() + m[0][3];
+	float y = m[1][0] * v.getX() + m[1][1] * v.getY() + m[1][2] * v.getZ() + m[1][3];
+	float z = m[2][0] * v.getX() + m[2][1] * v.getY() + m[2][2] * v.getZ() + m[2][3];
 
 	return Vector3f(x, y, z);
 }

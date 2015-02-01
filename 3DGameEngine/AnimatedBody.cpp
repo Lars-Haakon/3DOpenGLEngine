@@ -94,17 +94,12 @@ void AnimatedBody::calcVertices(Bone *bPtr, Vector3f *drawVertices, int frame)
 
 	if (bPtr->father != NULL) // if its not the root bone
 	{
-		Matrix4f boneMatrix = bPtr->frameMatrices[frame] * bPtr->sW;
-		Matrix4f skinnedMatrix = boneMatrix * bPtr->inverseBindMatrix;
-
+		Matrix4f finalMatrix = sW(bPtr) *cF(bPtr, frame);
 		for (int i = 0; i < bPtr->numVertexIndices; i++)
 		{
-			drawVertices[bPtr->vertexIndices[i]] += skinnedMatrix * bindPosVertices[bPtr->vertexIndices[i]] * bPtr->weights[i];
+			drawVertices[bPtr->vertexIndices[i]] += (finalMatrix*bPtr->inverseBindMatrix * bindPosVertices[bPtr->vertexIndices[i]]) * bPtr->weights[i];
 		}
 	}
-
-	int *a[6];
-	a[0] = 3;
 }
 
 //recursive function to free all memory occupied by the bone structure
@@ -193,18 +188,26 @@ void AnimatedBody::addBoneAnimation(char *boneName, int numFrames, Matrix4f *fra
 
 Matrix4f AnimatedBody::cM(Bone *bone)
 {
-	if (bone->father->father)
-		return cM(bone->father) * bone->frameTransformMatrix;
-	else
-		return bone->frameTransformMatrix;
+	if (bone->father->father != NULL)
+		return bone->frameTransformMatrix * cM(bone->father);
+	
+	return bone->frameTransformMatrix;
+}
+
+Matrix4f AnimatedBody::sW(Bone *bone)
+{
+	if (bone->father->father != NULL)
+		return bone->sW * sW(bone->father);
+
+	return bone->sW;
 }
 
 Matrix4f AnimatedBody::cF(Bone *bone, int frame)
 {
-	if (bone->father->father)
-		return cF(bone->father, frame) * bone->frameMatrices[frame];
-	else
-		return bone->frameMatrices[frame];
+	if (bone->father->father != NULL)
+		return bone->frameMatrices[frame] * cF(bone->father, frame);
+	
+	return bone->frameMatrices[frame];
 }
 
 AnimatedBody *AnimatedBody::loadAO(char *filename)
@@ -261,7 +264,7 @@ AnimatedBody *AnimatedBody::loadAO(char *filename)
 			if (ptr->father == NULL)
 				break;
 
-			Matrix4f c = ptr->frameTransformMatrix * ptr->sW;
+			Matrix4f c = sW(ptr) *cM(ptr);
 
 			ptr->inverseBindMatrix = c.inverted();
 			ptr = ptr->father;
@@ -407,9 +410,7 @@ void AnimatedBody::processMesh(FILE *stream, AnimatedBody *object)
 
 		float x, y, z;
 		sscanf_s(nLine, "%f;%f;%f", &x, &y, &z);
-		Vector3f v = Vector3f(x, y, z);
-
-		vertices[i] = v;
+		vertices[i] = Vector3f(x, y, z);
 	}
 	object->setVertices(numVertices, vertices);
 
@@ -581,7 +582,9 @@ void AnimatedBody::processAnimation(FILE *stream, AnimatedBody *object)
 		Matrix4f R;
 		R.initRotateTransform(orientationKeys[i].getX(), orientationKeys[i].getY(), orientationKeys[i].getZ(), orientationKeys[i].getW());
 
-		frameMatrices[i] = T * R;
+		Transform t = Transform(positionKeys[i], orientationKeys[i], Vector3f(1, 1, 1));
+
+		frameMatrices[i] = t.getTransformation();
 	}
 
 	object->addBoneAnimation(boneName, numFrames, frameMatrices);

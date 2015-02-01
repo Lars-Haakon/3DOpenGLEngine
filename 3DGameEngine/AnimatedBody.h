@@ -56,6 +56,7 @@ private:
 	static void removeSpaces(char *line);
 	static bool find(char *line, char *c);
 	static Matrix4f cM(Bone *bone);
+	static Matrix4f sW(Bone *bone);
 	static Matrix4f cF(Bone *bone, int frame);
 
 	//Recursive traversal functions using post ordering
